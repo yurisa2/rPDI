@@ -34,7 +34,7 @@ df2$value <- df$value + (df$value * (-1 * line_mean_lm$coefficients[2] * df$x * 
 # hist(im)
 # hist(as.cimg(df2))
 
-line_mean_lm2 <- lm(df2$value ~ df2$x)
+# line_mean_lm2 <- lm(df2$value ~ df2$x)
 
 # plot(im)
 # plot(as.cimg(df2))
@@ -45,30 +45,38 @@ thres2 <- renorm(thres2)
 
 # hist(thres2)
 thres3 <- threshold(thres2, thr = 145)
-plot(thres3)
+
+jpeg("placa_seg.jpg")
+par(mfrow=c(3,2))
+plot(line_mean_lm, main = "Regressão linear de y ~ x (média)")
+
+plot(im, main = "Placa Original")
+plot(thres3, main = "Placa Segmentada")
+dev.off()
+
 
 w_size <- 6
 
-
-medias <- NULL
-for(ix in 1:max(df$x)) for (iy in 1:max(df$y)) {
-  media_calc <- mean(subset(df, x > ix-w_size & x < ix+w_size & y > iy-w_size & y < iy+w_size )$value)
-  medias <- c(medias,media_calc)
-}
-
-
-
-
-
-dfc <- cbind(df,medias)
-
-bin <- ifelse(dfc$value > dfc$medias , 1,0)
-comb_total <- cbind(dfc,bin)
-
-result <- NULL
-result$x <- comb_total$x
-result$y <- comb_total$y
-result$value <- comb_total$bin
-
-imagem <- as.cimg(as.data.frame(result))
-plot(imagem)
+#
+# medias <- NULL
+# for(ix in 1:max(df$x)) for (iy in 1:max(df$y)) {
+#   media_calc <- mean(subset(df, x > ix-w_size & x < ix+w_size & y > iy-w_size & y < iy+w_size )$value)
+#   medias <- c(medias,media_calc)
+# }
+#
+#
+#
+#
+#
+# dfc <- cbind(df,medias)
+#
+# bin <- ifelse(dfc$value > dfc$medias , 1,0)
+# comb_total <- cbind(dfc,bin)
+#
+# result <- NULL
+# result$x <- comb_total$x
+# result$y <- comb_total$y
+# result$value <- comb_total$bin
+#
+# imagem <- as.cimg(as.data.frame(result))
+# plot(imagem)
