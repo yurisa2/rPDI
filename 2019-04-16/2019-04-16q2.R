@@ -46,13 +46,13 @@ thres2 <- renorm(thres2)
 # hist(thres2)
 thres3 <- threshold(thres2, thr = 145)
 
-jpeg("placa_seg.jpg")
+# jpeg("placa_seg.jpg")
 par(mfrow=c(3,2))
 plot(line_mean_lm, main = "Regressão linear de y ~ x (média)")
 
 plot(im, main = "Placa Original")
 plot(thres3, main = "Placa Segmentada")
-dev.off()
+# dev.off()
 
 
 w_size <- 6
