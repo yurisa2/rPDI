@@ -33,7 +33,6 @@ resultado_mat[,6] <- 0
 
 resultado_mat
 
-renorm(as.cimg(resultado_mat), min = 31, max =
 
 
 resultado_sub <- resultado_mat[2:5,2:5]
