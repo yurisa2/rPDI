@@ -44,8 +44,10 @@ process_images <- function(path_set, dataset_type_bin, limit = 20, start = 0) {
     if(counter > start) {
     img <- load.image(paste0(path_set,i))
     img_df <- as.data.frame(img)
+    # REMOVER o RECORTE AQUI, POSSIVELMENTE FAZER AS CONTAS PARA SABER
+    # SE A INFECCAO TEM ALguM TOM DIFERENTE DE 0
     img_r <- subset(img_df$value,img_df$cc==1)
-    img_r <- img_r[img_r!=0]
+    img_r <- img_r[img_r!=0] #MELHORAR AS FUNCOES DE RECORTE
     img_g <- subset(img_df$value,img_df$cc==2)
     img_g <- img_g[img_g!=0]
     img_b <- subset(img_df$value,img_df$cc==3)
