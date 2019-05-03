@@ -1,0 +1,3 @@
+[submodule "artigo/afis_fuzzysis"]
+	path = artigo/afis_fuzzysis
+	url = https://bitbucket.org/yurisa2/afis_fuzzysis
