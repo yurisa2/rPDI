@@ -1,13 +1,13 @@
 library(imager)
-setwd("/home/yurisa2/rPDI/artigo")
+setwd("/home/yurisa2/lampstack-5.6.22-0/apache2/htdocs/rpdi/artigo/")
 
 source(file="afis_fuzzysis/include/functions.R")
-# 
+#
 # doente <- load.image("test/Parasitized/C39P4thinF_original_IMG_20150622_105335_cell_9.png")
 # img_df <- as.data.frame(doente)
-# 
+#
 # img_df <- img_df[img_df$value!=0,] #MELHORAR AS FUNCOES DE RECORTE
-# 
+#
 # doente_f <- convert_image(doente)
 
 convert_image <- function(img,dataset_type_bin = 0) {
@@ -28,7 +28,7 @@ convert_image <- function(img,dataset_type_bin = 0) {
   feature_img <- c(feature_img,min(img_r))
   feature_img <- c(feature_img,min(img_g))
   feature_img <- c(feature_img,min(img_b))
-  # 
+  #
   # feature_img <- c(feature_img,(max(img_r) - min(img_r)))
   # feature_img <- c(feature_img,(max(img_g) - min(img_g)))
   # feature_img <- c(feature_img,(max(img_b) - min(img_b)))
@@ -38,14 +38,14 @@ convert_image <- function(img,dataset_type_bin = 0) {
 
   # FAZER AQUI UMA SERIE COM CALCULOS NORMALIZADOS
   # FAZER AQUI UMA SERIE COM CALCULOS GRAYSCALE
-  
+
   # img_g_df <- as.data.frame(grayscale(img))
   # img_g_df <- img_g_df[img_g_df!=0]
-  # 
+  #
   # feature_img <- c(feature_img,mean(img_g_df))
   # feature_img <- c(feature_img,min(img_g_df))
-  
-  
+
+
   return(feature_img)
 }
 
@@ -90,9 +90,29 @@ total_actual <- as.data.frame(total_actual)
 possb_feat <- 2:ncol(total_actual)
 nbin <- 1
 
+results <- result_matrix(total_training,total_actual,possb_feat,nbin,weights = "fixed", method = "only_1", rule_set = "full")
 
-results <- result_matrix(total_training,total_actual,possb_feat,nbin,weights = "dynamic", method = "only_1")
-summary(results)
 
-confusionMatrix(factor(results$Eval1),factor(results$Benchmark))
+# summary(results)
+lista_res <- NULL
+for(pesos in c("fixed", "dynamic")) for (metodos in c("only_1",
+                                                    "conservative",
+                                                    "conservative2",
+                                                    "sc",
+                                                    "sc2",
+                                                    "fuzzy50",
+                                                    "fuzzy55",
+                                                    "fuzzy60",
+                                                    "fuzzy65",
+                                                    "fuzzy70"
+                                                    )
+                                                  ) {
+results <- result_matrix(total_training,total_actual,possb_feat,nbin,weights = pesos, method = metodos)
 
+
+  lista_res <- rbind(lista_res,
+  c(pesos, metodos,
+  confusionMatrix(factor(results$Eval1),factor(results$Benchmark))$overall["Accuracy"]
+  ))
+
+                                                  }
