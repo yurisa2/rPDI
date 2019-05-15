@@ -2,50 +2,26 @@ library(imager)
 setwd("/home/yurisa2/lampstack-5.6.22-0/apache2/htdocs/rpdi/artigo/")
 
 source(file="afis_fuzzysis/include/functions.R")
-
-doente <- load.image("test/Parasitized/C39P4thinF_original_IMG_20150622_105335_cell_9.png")
-
-
-doente <- grayscale(doente)
-
-doente_df <- as.data.frame(doente)
-str(doente_df)
-
-doente_new <- doente_df
-
-media_new <- mean(doente_df$value[doente_df$value !=0])
-
-for(i in 4:length(doente_df$value)) {
-
-doente_new$value[i] <- doente_df$value[i] ^ doente_df$value[i-1]
-
-}
-
-doente_new <- doente_df
-
-doente_new$value <- ifelse(doente_new$value > media_new, doente_new$value * 1.1, doente_new$value * 0.9)
-
-# summary(doente_new)
-# summary(doente_df)
-par(mfrow = c(2,2))
-plot(as.cimg(doente_df))
-plot(as.cimg(doente_new))
-
-norm <- doente_df
-norm$value <- ifelse(norm$value != 0, normalize(norm$value),norm$value)
-
-# doente_df <- norm
-
-hist(doente_df$value)
-hist(norm$value)
-
-thr <- quantile(doente_df[doente_df$value!=0,]$value)[2]
-
-doente_df$value <- ifelse(doente_df$value > thr,1,0)
-
-head(doente_df)
-
-plot(as.cimg(doente_df))
+#
+# doente <- load.image("test/Parasitized/C39P4thinF_original_IMG_20150622_105335_cell_9.png")
+# doente <- grayscale(doente)
+# doente_df <- as.data.frame(doente)
+# plot(doente)
+# plot(doente_df[doente_df$y == 74 & doente_df$value != 0,]$value)
+# lowhing <- boxplot(doente_df[doente_df$value != 0,]$value, plot = F)$stats[1]
+# points <- doente_df[doente_df$value < lowhing,]$value
+# length(points)
+# str(doente_df)
+#
+# sadio <- load.image("test/Uninfected/C2NThinF_IMG_20150604_114631_cell_99.png")
+# sadio <- grayscale(sadio)
+# sadio_df <- as.data.frame(sadio)
+# plot(sadio)
+# plot(sadio_df[sadio_df$y == 74 & sadio_df$value != 0,]$value)
+# lowhing_sadio <- boxplot(sadio_df[sadio_df$value != 0,]$value, plot = F)$stats[1]
+# points_sadio <- sadio_df[sadio_df$value < lowhing_sadio,]$value
+# length(points_sadio)
+# str(sadio_df)
 
 
 
@@ -67,48 +43,43 @@ plot(as.cimg(doente_df))
 # doente_f <- convert_image(doente)
 
 convert_image <- function(img,dataset_type_bin = 0) {
-  img_df <- as.data.frame(img)
+  img_df <- grayscale(img)
+  img_df <- as.data.frame(img_df)
 
-  img_r <- subset(img_df$value,img_df$cc==1)
-  img_r <- img_r[img_r!=0] #MELHORAR AS FUNCOES DE RECORTE
-  img_g <- subset(img_df$value,img_df$cc==2)
-  img_g <- img_g[img_g!=0]
-  img_b <- subset(img_df$value,img_df$cc==3)
-  img_b <- img_b[img_b!=0]
+  img_df <- img_df[img_df$value!=0,] #MELHORAR AS FUNCOES DE RECORTE
+
+  img_df$value <- normalize(img_df$value)
+
   feature_img <- dataset_type_bin
 
-  feature_img <- c(feature_img,mean(img_r))
-  feature_img <- c(feature_img,mean(img_g))
-  feature_img <- c(feature_img,mean(img_b))
+  feature_img <- c(feature_img,mean(img_df$value))
 
-  feature_img <- c(feature_img,min(img_r))
-  feature_img <- c(feature_img,min(img_g))
-  feature_img <- c(feature_img,min(img_b))
-  #
-  # feature_img <- c(feature_img,(max(img_r) - min(img_r)))
+  feature_img <- c(feature_img,min(img_df$value))
+
+  feature_img <- c(feature_img,length(img_df$value[img_df$value < boxplot(img_df[img_df$value != 0,]$value, plot = F)$stats[1]]))
+
+
+  # feature_img <- c(feature_img,(max(img_df$value) - min(img_df$value)))
   # feature_img <- c(feature_img,(max(img_g) - min(img_g)))
   # feature_img <- c(feature_img,(max(img_b) - min(img_b)))
 
-  feature_img <- c(feature_img,length(img_df$value[img_df$value < quantile(img_df$value)[2]]))
-
-
-  img_hsv <- RGBtoHSV(img)
-  img_df_hsv <- as.data.frame(img_hsv)
-
-  img_1_hsv <- subset(img_df_hsv$value,img_df_hsv$cc==1)
-  img_1_hsv <- img_1_hsv[img_1_hsv!=0] #MELHORAR AS FUNCOES DE RECORTE
-  img_2_hsv <- subset(img_df_hsv$value,img_df_hsv$cc==2)
-  img_2_hsv <- img_2_hsv[img_2_hsv!=0]
-  img_3_hsv <- subset(img_df_hsv$value,img_df_hsv$cc==3)
-  img_3_hsv <- img_3_hsv[img_3_hsv!=0]
-
-  # feature_img <- c(feature_img,mean(img_1_hsv))
-  # feature_img <- c(feature_img,mean(img_2_hsv))
-  # feature_img <- c(feature_img,mean(img_3_hsv))
-
-  feature_img <- c(feature_img,min(img_1_hsv))
-  feature_img <- c(feature_img,min(img_2_hsv))
-  feature_img <- c(feature_img,min(img_3_hsv))
+  # img_hsv <- RGBtoHSV(img)
+  # img_df_hsv <- as.data.frame(img_hsv)
+  #
+  # img_1_hsv <- subset(img_df_hsv$value,img_df_hsv$cc==1)
+  # img_1_hsv <- img_1_hsv[img_1_hsv!=0] #MELHORAR AS FUNCOES DE RECORTE
+  # img_2_hsv <- subset(img_df_hsv$value,img_df_hsv$cc==2)
+  # img_2_hsv <- img_2_hsv[img_2_hsv!=0]
+  # img_3_hsv <- subset(img_df_hsv$value,img_df_hsv$cc==3)
+  # img_3_hsv <- img_3_hsv[img_3_hsv!=0]
+  #
+  # # feature_img <- c(feature_img,mean(img_1_hsv))
+  # # feature_img <- c(feature_img,mean(img_2_hsv))
+  # # feature_img <- c(feature_img,mean(img_3_hsv))
+  #
+  # feature_img <- c(feature_img,min(img_1_hsv))
+  # feature_img <- c(feature_img,min(img_2_hsv))
+  # feature_img <- c(feature_img,min(img_3_hsv))
 
   return(feature_img)
 }
@@ -168,9 +139,10 @@ results <- result_matrix(total_training,total_actual,possb_feat,nbin,weights = "
 
 
   lista_res <- rbind(lista_res,
-  c(limite_treino,
-  confusionMatrix(factor(results$Eval1),factor(results$Benchmark))$overall["Accuracy"]
-  ))
+    c(limite_treino,
+    confusionMatrix(factor(results$Eval1),factor(results$Benchmark))$overall["Accuracy"]
+    )
+  )
   resultado_ext <- confusionMatrix(factor(results$Eval1),factor(results$Benchmark))
 
-                                                  }
+}
