@@ -1,6 +1,6 @@
 library(imager)
-setwd("/home/yurisa2/lampstack-5.6.22-0/apache2/htdocs/rpdi/artigo/")
-
+setwd("C:/Users/Administrator/Documents/rPDI/artigo/")
+# install.packages("caret",repos = "http://cran.us.r-project.org")
 source(file="afis_fuzzysis/include/functions.R")
 #
 # doente <- load.image("test/Parasitized/C39P4thinF_original_IMG_20150622_105335_cell_9.png")
@@ -55,6 +55,8 @@ convert_image <- function(img,dataset_type_bin = 0) {
   feature_img <- c(feature_img,mean(img_df$value))
 
   feature_img <- c(feature_img,min(img_df$value))
+
+  feature_img <- c(feature_img,sd(img_df$value))
 
   feature_img <- c(feature_img,length(img_df$value[img_df$value < boxplot(img_df[img_df$value != 0,]$value, plot = F)$stats[1]]))
 
@@ -146,3 +148,6 @@ results <- result_matrix(total_training,total_actual,possb_feat,nbin,weights = "
   resultado_ext <- confusionMatrix(factor(results$Eval1),factor(results$Benchmark))
 
 }
+
+confusionMatrix(factor(results$Eval1),factor(results$Benchmark))
+# install.packages("e1071",repos = "http://cran.us.r-project.org")
