@@ -118,6 +118,9 @@ band_name <- function(sat = 0,band = 0)  {
 
 
 ndvi <- function(nir_img, red_img)  {
+  nir_img <- resize(nir_img, size_x = 733, size_y = 466)
+  red_img <- resize(red_img, size_x = 733, size_y = 466)
+
   ret <- NULL
   ret <- (nir_img - red_img) / (nir_img + red_img)
   return(ret)
@@ -130,6 +133,12 @@ ndwi <- function(nir_img, green_img)  {
 }
 
 area_water <- function(px_coords, image , sigma_value = .2) {
+  value_px_ref <- 250
+  value_px_ref <- at(image,px_coords[1],px_coords[2])
+  if(is.na(value_px_ref)) return(0)
+  if(value_px_ref > 100) return(0)
+
+  image <- inpaint(image,1)
 
   seg <- threshold(image,thr = "12%")
   px <- px.flood(seg, x = px_coords[1], y = px_coords[2], sigma = sigma_value)
@@ -153,6 +162,9 @@ get_water_size <- function(files_info) {
     red_filename <- files_red[files_red$aquisicao_ano == nir_ano &
                               files_red$aquisicao_mes == nir_mes &
                               files_red$aquisicao_dia == nir_dia,]$name
+
+    red_filename <- red_filename[1]
+    nir_filename <- nir_filename[1]
 
     nir_img <- load.image(paste0("represa/",nir_filename))
     red_img <- load.image(paste0("represa/",red_filename))
@@ -184,10 +196,19 @@ get_all_areas <- function(files_info) {
                               files_red$aquisicao_mes == nir_mes &
                               files_red$aquisicao_dia == nir_dia,]$name
 
+    red_filename <- red_filename[1]
+    nir_filename <- nir_filename[1]
+
     nir_img <- load.image(paste0("represa/",nir_filename))
     red_img <- load.image(paste0("represa/",red_filename))
 
+    nir_img <- resize(nir_img, size_x = 733, size_y = 466)
+    red_img <- resize(red_img, size_x = 733, size_y = 466)
+
     img_ndvi <- ndvi(nir_img,red_img)
+
+    # img_ndvi <- inpaint(img_ndvi,1)
+    img_ndvi <- inpaint(img_ndvi,1)
 
     seg <- threshold(img_ndvi,thr = "12%")
     px <- px.flood(seg, x = 300, y = 180, sigma=.2)

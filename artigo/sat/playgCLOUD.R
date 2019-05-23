@@ -1,4 +1,4 @@
-PATH <- "/home/yurisa2/rPDI/artigo/sat"
+PATH <- "C:/Users/Administrator/Documents/rPDI/artigo/sat"
 
 setwd(PATH)
 
@@ -11,13 +11,13 @@ rm(file_list)
 file_list <- list.files(paste0(PATH,"/represa"), recursive = TRUE)
 
 files_info <- get_table_files(file_list)
-str(files_info)
+# str(files_info)
 
 water_size <- get_water_size(files_info)
 median_water_size <- median(as.numeric(water_size$area))
 
-water_size <- water_size[as.numeric(water_size$area) < (1.1 * median_water_size) &
-                        as.numeric(water_size$area) > (0.8 * median_water_size),  ]
+water_size <- water_size[as.numeric(water_size$area) < (1.5 * median_water_size) &
+                        as.numeric(water_size$area) > (0.4 * median_water_size),  ]
 
 get_aa <- get_all_areas(files_info)
 # str(get_aa)
@@ -28,6 +28,5 @@ for(i in 2:nrow(water_size)) {
 
   result_image <-   result_image + get_aa[[paste0(water_size$year[i],water_size$month[i],water_size$day[i])]]
 }
-
 
 plot(result_image)
