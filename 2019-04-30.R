@@ -3,10 +3,10 @@ library(imager)
 
 install.packages('imager')
 
-laplaciano <- matrix(c(0,-1,0,-1,4,-1,0,-1,0), nrow=3)
+laplaciano <- matrix(c(-1,-1,-1,-1,8,-1,-1,-1,-1), nrow=3)
 
-prewitt_0 <- matrix(c(-1,-1,-1,0,0,0,1,1,1), nrow=3)
-prewitt_90 <- matrix(c(-1,0,1,-1,0,1,-1,0,1), nrow=3)
+prewitt_h <- matrix(c(-1,-1,-1,0,0,0,1,1,1), nrow=3)
+prewitt_v <- matrix(c(-1,0,1,-1,0,1,-1,0,1), nrow=3)
 
 q1ln1 <- c(0,2,4,2,2,1)
 q1ln2 <- c(1,0,121,124,123,0)
@@ -17,23 +17,26 @@ q1ln6 <- c(2,0,1,1,2,1)
 matrixq1 <- rbind(q1ln1,q1ln2,q1ln3,q1ln4,q1ln5,q1ln6)
 matrixq1 <- as.cimg(matrixq1)
 
+
+matrixq1_prewitt_horizontal <- convolve(matrixq1,as.cimg(prewitt_h))
+print("Matrix com filtro Prewitt Horizontal")
+as.matrix(matrixq1_prewitt_horizontal, nrow=6) # OK, issaque
+
+matrixq1_prewitt_vertical <- convolve(matrixq1,as.cimg(prewitt_v))
+print("Matrix com filtro Prewitt vertical")
+as.matrix(matrixq1_prewitt_vertical, nrow=6) # OK, issaque
+
+as.matrix(matrixq1_prewitt_horizontal + matrixq1_prewitt_vertical, nrow=6) # OK, issaque
+
+
 matrixq1_laplaciano <- convolve(matrixq1,as.cimg(laplaciano))
 print("Matrix com filtro laplaciano")
-laplaciano
 as.matrix(matrixq1_laplaciano, nrow=6) # OK, issaque
 
-matrixq1_prewitt <- convolve(matrixq1,as.cimg(prewitt_0))
-print("Matrix com filtro Prewitt 0o")
-as.matrix(matrixq1_prewitt, nrow=6) # OK, issaque
+Laplaciano_result <- threshold(renorm(as.cimg(matrixq1_laplaciano)))
+str(Laplaciano_result)
 
-matrixq1_prewitt <- convolve(matrixq1_prewitt,as.cimg(prewitt_90))
-print("Matrix com filtro Prewitt 90o")
-as.matrix(matrixq1_prewitt, nrow=6) # OK, issaque
-
-
-
-
-
+as.matrix(Laplaciano_result, nrow=6) # OK, issaque
 
 
 # 3

@@ -11,7 +11,21 @@ file_list <- list.files(paste0(PATH,"/represa"), recursive = TRUE)
 
 files_info <- get_table_files(file_list)
 
-# str(files_info)
+str(files_info)
+
+full_nuvem <- load.image("represa/LT05_L1TP_219076_20000202_20161215_01_T1_B4.tif")
+teste_full_nuvem <- get_key_values(full_nuvem)
+summary(teste_full_nuvem)
+no_meio_nuvem <- load.image("represa/LT05_L1TP_219076_20000218_20161216_01_T1_B4.tif")
+teste_no_meio_nuvem <- get_key_values(no_meio_nuvem)
+plot(no_meio_nuvem)
+summary(teste_no_meio_nuvem)
+sem_nuvem <- load.image("represa/LT05_L1TP_219076_19991216_20161215_01_T1_B4.tif")
+plot(sem_nuvem)
+teste_sem_nuvem <- get_key_values(sem_nuvem)
+summary(teste_sem_nuvem)
+
+
 
 water_size <- get_water_size(files_info)
 # summary(as.numeric(water_size$area))
