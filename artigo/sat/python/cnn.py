@@ -24,7 +24,7 @@ print('y_test shape:', y_test.shape) # 2D array 10,000 rows and 1 column
 
 # Take a look at the first image (at index=0) in the training data set as a numpy array
 # This shows the image as a series of pixel values
-x_train[0]
+x_train[0][0][0]
 
 # Show the image as an image instead of a series of pixel values using matplotlib
 import matplotlib.pyplot as plt
@@ -61,8 +61,8 @@ x_train = x_train / 255
 x_test = x_test / 255
 
 #  Build The CNN
-from keras.models import Sequential
-from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
 
 model = Sequential() # Create the architecture
 
@@ -137,13 +137,17 @@ plt.show()
 # Load the data
 # from google.colab import files #  Use to load data on Google Colab
 # uploaded = files.upload() #  Use to load data on Google Colab
-my_image = plt.imread("cat.4014.jpg") # Read in the image (3, 14, 20)
 
+import os
+os.chdir("C:/Users/Administrator/Documents/rPDI/artigo/sat/python")
+
+my_image = plt.imread("cat.4014.jpg") # Read in the image (3, 14, 20)
 # Show the uploaded image
 img = plt.imshow(my_image)
 
 
 # Resize & Show the image
+import skimage
 from skimage.transform import resize
 my_image_resized = resize(my_image, (32,32,3)) # resize the image to 32x32 pixel with depth = 3
 img = plt.imshow(my_image_resized) # show new image
@@ -168,5 +172,5 @@ print("Fifth most likely class:", number_to_class[index[5]], "-- Probability:", 
 model.save('my_model.h5')
 
 # To load this model
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 model = load_model('my_model.h5')

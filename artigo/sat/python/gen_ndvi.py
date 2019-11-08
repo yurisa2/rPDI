@@ -40,7 +40,10 @@ nir_band_files = nir_band_files.append(nir_band_files_l05)
 nir_band_files = nir_band_files.append(nir_band_files_l04)
 
 
-def write_ndvi(red_band, nir_band):
+def write_ndvi(red_band, nir_band, name):
+
+    red_band = rasterio.open(red_band)  # red raster
+    nir_band = rasterio.open(nir_band)  # nir raster
 
     red = red_band.read(1).astype('float64')
     nir = nir_band.read(1).astype('float64')
@@ -51,9 +54,12 @@ def write_ndvi(red_band, nir_band):
 
     ndvi *= 255.0/ndvi.max()
 
+    ndvi = np.interp(ndvi,
+                        (ndvi.min(), ndvi.max()), (0, 255))
+
     ndvi = ndvi.astype('uint8')
 
-    ndviImage = rasterio.open('../Output/ultimatenorm.bmp', 'w', driver='BMP',
+    ndviImage = rasterio.open('../ndvi_files/' + name + '_ndvi_norm.jpg', 'w', driver='JPEG',
                               width=red_band.width,
                               height=red_band.height,
                               count=1, crs=red_band.crs,
@@ -64,21 +70,22 @@ def write_ndvi(red_band, nir_band):
 
     return True
 
-
-nir_band_files.iloc[45][0]
+nir_band_files.iloc[45]['img_name']
 red_band_files.iloc[45][0]
 
 red_r = rasterio.open(red_band_files.iloc[45][0])  # red raster
 nir_r = rasterio.open(nir_band_files.iloc[45][0])  # nir raster
+name = nir_band_files.iloc[45]['img_name']
 
-red_file_name = None
+
+
+
+red_file_name = 0
 for row in nir_band_files.iterrows():
+    img_file = row[1]['img_name'] # IMG main name
     nir_file_name = row[1][0]
-    img_file = row[1]['img_name']
-    red_file_name = red_band_files[red_band_files.img_name == img_file][0]
+    red_file_name = red_band_files[red_band_files.img_name == img_file].iloc[0][0]
+    if len(nir_file_name) > 30 and len(red_file_name) > 30 :
+        write_ndvi(nir_file_name, red_file_name, img_file)
+
     # print(img_file)
-
-red_file_name.loc[:2]
-
-
-write_ndvi(red_r, nir_r)
