@@ -1,15 +1,23 @@
 import os
 from PIL import Image
+import numpy as np
 
-os.chdir("C:/Users/Administrator/Documents/rPDI/artigo/sat")
+os.chdir("/home/yurisa2/lampstack-7.3.7-1/apache2/htdocs/rPDI/artigo/sat")
 
 
-ndvi_files = os.listdir(
-                "ndvi_files/")
+img_files = os.listdir("rgb_files/")
 
-size = 383, 217
+widths = np.empty(1)
+heights = np.empty(1)
 
-for i in ndvi_files:
-    im = Image.open("ndvi_files/" + i)
+for i in img_files:
+    im = Image.open("rgb_files/" + i)
+    widths = np.append(widths,im.size[0])
+    heights = np.append(heights,im.size[1])
+
+size = min(widths).astype("uint8"), min(heights).astype("uint8")
+
+for i in img_files:
+    im = Image.open("rgb_files/" + i)
     im = im.resize(size, Image.NEAREST)
-    im.save('ndvi_files_resized/' + i + '.jpg', "JPEG")
+    im.save('rgb_files_resized/' + i + '.jpg', "JPEG")
