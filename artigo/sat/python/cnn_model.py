@@ -94,26 +94,44 @@ y_test_one_hot = to_categorical(y_test)
 
 model = Sequential() # Create the architecture
 
-model.add(Conv1D(32, (5), activation='relu', input_shape=(217, 383)))
+model.add(Conv1D(128, (5), activation='relu', input_shape=(217, 383)))
 
 model.add(MaxPooling1D(pool_size=(2)))
 
-model.add(Conv1D(64, (5), activation='relu'))
+model.add(Conv1D(256, (5), activation='relu'))
 
 model.add(MaxPooling1D(pool_size=(2)))
 
 model.add(Flatten())
-model.add(Dense(1000, activation='relu')) #  a layer with 1000 neurons and activation function ReLu
+model.add(Dense(128, activation='relu')) #  a layer with 1000 neurons and activation function ReLu
 model.add(Dense(2, activation='softmax')) # a layer with 2 output neurons 1 for each label using softmax activation function
 
-model.compile(loss='mean_squared_error', #  loss function used for classes that are greater than 2)
+model.compile(loss='categorical_crossentropy', #  loss function used for classes that are greater than 2)
               optimizer='adam',
               metrics=['accuracy'])
 
 hist = model.fit(x_train, y_train_one_hot,
-           batch_size=2, epochs=10, validation_split=0.3)
+           batch_size=32, epochs=10, validation_split=0.3)
 
-teste = Image.open("python/teste.jpg")
+teste = Image.open("python/4parcial.jpg")
+testeArr = np.empty((1, 217, 383))
+testeArr[0] = teste
+
+model.predict(testeArr)
+
+teste = Image.open("python/7listrado.jpg")
+testeArr = np.empty((1, 217, 383))
+testeArr[0] = teste
+
+model.predict(testeArr)
+
+teste = Image.open("python/8nuvem.jpg")
+testeArr = np.empty((1, 217, 383))
+testeArr[0] = teste
+
+model.predict(testeArr)
+
+teste = Image.open("python/8limpo.jpg")
 testeArr = np.empty((1, 217, 383))
 testeArr[0] = teste
 
