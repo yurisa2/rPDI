@@ -5,10 +5,9 @@ import numpy as np
 from PIL import Image
 
 
-dir = "/home/yurisa2/lampstack-7.3.7-1/apache2/htdocs/rPDI/artigo/sat/represa"
+dir = "C:/Users/Administrator/Documents/rPDI/artigo/sat/represa"
 
-all_files = os.listdir(
-    dir)
+all_files = os.listdir(dir)
 
 os.chdir(dir)
 
@@ -74,15 +73,15 @@ def write_rgb(grn_band, red_band, nir_band, name):
 
     rgb = np.empty((red_band.height, red_band.width, 3), dtype="uint8")
 
-    rgb[...,0] = nir
-    rgb[...,1] = red
-    rgb[...,2] = grn
+    rgb[..., 0] = nir
+    rgb[..., 1] = red
+    rgb[..., 2] = grn
 
     img = Image.fromarray(rgb)
     img.save("../rgb_files/" + name + "_rgb.jpg")
 
-
     return True
+
 
 nir_band_files.iloc[45]['img_name']
 red_band_files.iloc[45][0]
@@ -93,10 +92,9 @@ nir_r = rasterio.open(nir_band_files.iloc[45][0])  # nir raster
 name = nir_band_files.iloc[45]['img_name']
 
 
-
 red_file_name = 0
 for row in nir_band_files.iterrows():
-    img_file = row[1]['img_name'] # IMG main name
+    img_file = row[1]['img_name']  # IMG main name
     nir_file_name = row[1][0]
     red_file_name = red_band_files[red_band_files.img_name == img_file].iloc[0][0]
     grn_file_name = grn_band_files[grn_band_files.img_name == img_file].iloc[0][0]

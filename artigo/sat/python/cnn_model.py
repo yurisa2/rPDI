@@ -1,16 +1,12 @@
 import os
 import numpy as np
 from PIL import Image
-import random
-from random import randint
-from random import sample
 import pandas as pd
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Conv1D, MaxPooling1D
-import matplotlib.pyplot as plt
 
-os.chdir("/home/yurisa2/lampstack-7.3.7-1/apache2/htdocs/rPDI/artigo/sat")
+os.chdir("C:/Users/Administrator/Documents/rPDI/artigo/sat")
 
 ndvi_files = os.listdir("ndvi_files_resized/")
 
@@ -36,8 +32,9 @@ trained_1_df["img_name"] = trained_1_string
 trained_0_df["sat_no"] = trained_0_satno
 trained_1_df["sat_no"] = trained_1_satno
 
-trained_0_df = trained_0_df.sample(frac=1).reset_index(drop=True)
-trained_1_df = trained_1_df.sample(frac=1).reset_index(drop=True)
+
+trained_0_df = trained_0_df.sample(frac=1, random_state=1).reset_index(drop=True)
+trained_1_df = trained_1_df.sample(frac=1, random_state=1).reset_index(drop=True)
 
 trained_0_df["y"] = 0
 trained_1_df["y"] = 1
@@ -47,8 +44,8 @@ trained_1_df = trained_1_df[0:100]
 
 trained_full = pd.concat([trained_0_df,trained_1_df])
 
-trained_full = trained_full.sample(frac=1).reset_index(drop=True)
-trained_full = trained_full.sample(frac=1).reset_index(drop=True)
+trained_full = trained_full.sample(frac=1, random_state=1).reset_index(drop=True)
+trained_full = trained_full.sample(frac=1, random_state=1).reset_index(drop=True)
 
 
 trained_full['ndvi'] = trained_full['img_name'] + '_ndvi_norm.jpg.jpg'
@@ -94,11 +91,11 @@ y_test_one_hot = to_categorical(y_test)
 
 model = Sequential() # Create the architecture
 
-model.add(Conv1D(128, (5), activation='relu', input_shape=(217, 383)))
+model.add(Conv1D(32, (5), activation='relu', input_shape=(217, 383)))
 
 model.add(MaxPooling1D(pool_size=(2)))
 
-model.add(Conv1D(256, (5), activation='relu'))
+model.add(Conv1D(64, (5), activation='relu'))
 
 model.add(MaxPooling1D(pool_size=(2)))
 
@@ -110,29 +107,23 @@ model.compile(loss='categorical_crossentropy', #  loss function used for classes
               optimizer='adam',
               metrics=['accuracy'])
 
-hist = model.fit(x_train, y_train_one_hot,
-           batch_size=32, epochs=10, validation_split=0.3)
+hist = model.fit(x_train,
+    	   y_train_one_hot,
+           batch_size=32,
+           epochs=10,
+           # validation_split=0.3,
+           validation_data=(x_test, y_test_one_hot)
+           )
 
-teste = Image.open("python/4parcial.jpg")
-testeArr = np.empty((1, 217, 383))
+testeArr = np.empty((4, 217, 383))
+
+teste = Image.open("python/bwproof/4parcial.jpg")
 testeArr[0] = teste
-
-model.predict(testeArr)
-
-teste = Image.open("python/7listrado.jpg")
-testeArr = np.empty((1, 217, 383))
-testeArr[0] = teste
-
-model.predict(testeArr)
-
-teste = Image.open("python/8nuvem.jpg")
-testeArr = np.empty((1, 217, 383))
-testeArr[0] = teste
-
-model.predict(testeArr)
-
-teste = Image.open("python/8limpo.jpg")
-testeArr = np.empty((1, 217, 383))
-testeArr[0] = teste
+teste = Image.open("python/bwproof/7listrado.jpg")
+testeArr[1] = teste
+teste = Image.open("python/bwproof/8nuvem.jpg")
+testeArr[2] = teste
+teste = Image.open("python/bwproof/8limpo.jpg")
+testeArr[3] = teste
 
 model.predict(testeArr)
