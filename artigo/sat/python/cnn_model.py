@@ -112,7 +112,7 @@ hist = model.fit(x_train,
            batch_size=32,
            epochs=10,
            # validation_split=0.3,
-           validation_data=(x_test, y_test_one_hot)
+           validation_data=(x_test, y_test_one_hot),
            )
 
 testeArr = np.empty((4, 217, 383))
