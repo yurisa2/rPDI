@@ -8,7 +8,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
 from tensorflow.keras.callbacks import *
 
-os.chdir("/home/yurisa2/lampstack-7.3.7-1/apache2/htdocs/rPDI/artigo/sat")
+os.chdir("C:/Users/Administrator/Documents/rPDI/artigo/sat")
 
 dir_labels = os.listdir("rgb_files_multilabel/")
 
@@ -34,26 +34,26 @@ whole["sat_no"] = whole_satno
 
 whole = whole.sample(frac=1, random_state=1).reset_index(drop=True)
 
+train_size = len(whole)
 
+x_train_df = whole[0:train_size]['filename']
+# x_test_df = whole[151:645]['filename']
 
-x_train_df = whole[0:150]['filename']
-x_test_df = whole[151:645]['filename']
-
-y_train_df = whole[0:150]['label']
-y_train_df.astype('category').describe()
+y_train_df = whole[0:train_size]['label']
+# y_train_df.astype('category').describe()
 y_train_df = y_train_df.astype('category')
 
-y_test_df = whole[151:645]['label']
-y_test_df.astype('category').describe()
-y_test_df = y_test_df.astype('category')
+# y_test_df = whole[151:645]['label']
+# y_test_df.astype('category').describe()
+# y_test_df = y_test_df.astype('category')
 
 y_train = np.array(y_train_df)
-y_test = np.array(y_test_df)
+# y_test = np.array(y_test_df)
 
 y_train.shape  # O ERRO ESTA AQUI
-y_train = np.reshape(y_train, (150, 1))
-y_test.shape  # O ERRO ESTA AQUI
-y_test = np.reshape(y_test, (494, 1))
+y_train = np.reshape(y_train, (train_size, 1))
+# y_test.shape  # O ERRO ESTA AQUI
+# y_test = np.reshape(y_test, (494, 1))
 
 no_files = len(x_train_df)
 
@@ -66,23 +66,19 @@ for i in x_train_df:
     j = j+1
 
 
-no_files = len(x_test_df)
-
-x_test = np.empty((no_files, 217, 383, 3))
-j = 0
-
-for i in x_test_df:
-    image = np.array(Image.open("rgb_files_resized/" + i))
-    x_test[j] = image
-    j = j+1
+# no_files = len(x_test_df)
+#
+# x_test = np.empty((no_files, 217, 383, 3))
+# j = 0
+#
+# for i in x_test_df:
+#     image = np.array(Image.open("rgb_files_resized/" + i))
+#     x_test[j] = image
+#     j = j+1
 
 
 y_train_one_hot = to_categorical(y_train_df.factorize()[0])
-y_test_one_hot = to_categorical(y_test_df.factorize()[0])
-
-y_train_one_hot.shape
-y_test_one_hot.shape
-
+# y_test_one_hot = to_categorical(y_test_df.factorize()[0])
 
 
 logdir = 'python/logs/scalars/' + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -90,7 +86,7 @@ os.mkdir(logdir)
 
 logdir = os.path.join(logdir)
 
-tensorboard_callback = TensorBoard(log_dir=logdir)
+tensorboard_callback = TensorBoard(log_dir=logdir, histogram_freq=1,  profile_batch=100000000)
 
 
 model = Sequential()  # Create the architecture
@@ -107,31 +103,19 @@ model.add(Flatten())
 # a layer with 1000 neurons and activation function ReLu
 model.add(Dense(64, activation='relu'))
 # a layer with 2 output neurons 1 for each label using softmax activation function
-model.add(Dense(2, activation='softmax'))
+model.add(Dense(5, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy',  # loss function used for classes that are greater than 2)
               optimizer='adam',
-              metrics=['accuracy'])
-
-x_train.shape
-x_test.shape
-y_train_one_hot.shape
-y_test_one_hot.shape
-
-type(x_train)
-type(x_test)
-type(y_train_one_hot)
-type(y_test_one_hot)
-
-
+              metrics=['accuracy','mae', 'mse'])
 
 hist = model.fit(x_train,
                  y_train_one_hot,
                  batch_size=32,
                  epochs=10,
-                 # validation_split=0.3,
-                 validation_data=(x_test, y_test_one_hot),
-                 # callbacks=[tensorboard_callback],
+                 validation_split=0.3,
+                 # validation_data=(x_test, y_test_one_hot),
+                 callbacks=[tensorboard_callback],
                  )
 
 testeArr = np.empty((4, 217, 383, 3))

@@ -8,7 +8,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
 from tensorflow.keras.callbacks import *
 
-os.chdir("/home/yurisa2/lampstack-7.3.7-1/apache2/htdocs/rPDI/artigo/sat")
+os.chdir("C:/Users/Administrator/Documents/rPDI/artigo/sat")
 
 ndvi_files = os.listdir("rgb_files_resized/")
 
