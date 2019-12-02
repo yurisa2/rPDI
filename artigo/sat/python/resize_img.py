@@ -2,7 +2,7 @@ import os
 from PIL import Image
 import numpy as np
 
-os.chdir("C:/Users/Administrator/Documents/rPDI/artigo/sat")
+os.chdir("/home/yurisa2/lampstack-7.3.7-1/apache2/htdocs/rPDI/artigo/sat")
 
 
 img_files = os.listdir("rgb_files/")

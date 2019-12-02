@@ -8,7 +8,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
 from tensorflow.keras.callbacks import *
 
-os.chdir("C:/Users/Administrator/Documents/rPDI/artigo/sat")
+os.chdir("/home/yurisa2/lampstack-7.3.7-1/apache2/htdocs/rPDI/artigo/sat")
 
 ndvi_files = os.listdir("rgb_files_resized/")
 
@@ -34,10 +34,8 @@ trained_1_df["img_name"] = trained_1_string
 trained_0_df["sat_no"] = trained_0_satno
 trained_1_df["sat_no"] = trained_1_satno
 
-trained_0_df = trained_0_df.sample(
-    frac=1, random_state=1).reset_index(drop=True)
-trained_1_df = trained_1_df.sample(
-    frac=1, random_state=1).reset_index(drop=True)
+trained_0_df = trained_0_df.sample(frac=1, random_state=1).reset_index(drop=True)
+trained_1_df = trained_1_df.sample(frac=1, random_state=1).reset_index(drop=True)
 
 trained_0_df["y"] = 0
 trained_1_df["y"] = 1
@@ -47,10 +45,8 @@ trained_1_df["y"] = 1
 
 trained_full = pd.concat([trained_0_df, trained_1_df])
 
-trained_full = trained_full.sample(
-    frac=1, random_state=1).reset_index(drop=True)
-trained_full = trained_full.sample(
-    frac=1, random_state=1).reset_index(drop=True)
+trained_full = trained_full.sample(frac=1, random_state=1).reset_index(drop=True)
+trained_full = trained_full.sample(frac=1, random_state=1).reset_index(drop=True)
 
 
 trained_full['rgb'] = trained_full['img_name'] + '_rgb.jpg'
@@ -98,7 +94,7 @@ y_train_one_hot = to_categorical(y_train)
 y_test_one_hot = to_categorical(y_test)
 
 
-logdir = 'C:\\Users\\Administrator\\Documents\\rPDI\\artigo\\sat\\python\\logs\\scalars\\' + datetime.now().strftime("%Y%m%d-%H%M%S") + '\\'
+logdir = 'python/logs/scalars/' + datetime.now().strftime("%Y%m%d-%H%M%S")
 os.mkdir(logdir)
 
 logdir = os.path.join(logdir)
